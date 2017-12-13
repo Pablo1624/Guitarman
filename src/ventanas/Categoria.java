@@ -5,41 +5,26 @@
  */
 package ventanas;
 
-
-import Modelo.Juego;
-import Modelo.Tienda;
+import Modelo.Conectar;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
-import javax.swing.table.TableColumn;
 public class Categoria extends javax.swing.JDialog {
-
-    Tienda t=new Tienda();
     Connection con = null;
-   Statement stmt = null;
-   String titulos[] = {"ID","Nombre del juego","Precio","Categoria","Stock"};
-   String fila[] = new String [5];
-   DefaultTableModel modelo;
-    /**
-     * Creates new form Categoria
-     */
-    /*private DefaultTableModel lista=new DefaultTableModel();
-    private JTable tabla=new JTable();*/
+    Statement stmt = null;
+    String titulos[] = {"ID","Nombre juego","Precio","Categoria","Stock"};
+    String fila[] = new String [5];
+    DefaultTableModel modelo;
     public Categoria(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.setTitle("***TODOS LOS REGISTROS***");
-        this.setLocation(335,200);//aparece en medio
-        this.setResizable(false);//no puede editar la ventana
-        ImageIcon icono = new ImageIcon("C:\\Users\\kdt_r_000\\Documents\\NetBeansProjects\\ProyectoInterfaz\\src\\Imagenes\\add-user.png");
-        this.setIconImage(icono.getImage());
         this.setLocationRelativeTo(null);
-        /*jTable1.setModel(lista);
-        this.jComboBoxCategoria1.setSelectedIndex(0);*/
+        this.setResizable(false);//no puede editar la ventana
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -51,34 +36,46 @@ public class Categoria extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jComboBoxCategoria1 = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabla_usuarios = new javax.swing.JTable();
+        tabla_juegos = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jButton1.setText("Listar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         jComboBoxCategoria1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "Acción", "Aventura", "Deporte", "Mesa", "Habilidad", "Carreras", "Estrategia", "Disparos" }));
 
-        tabla_usuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tabla_juegos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Nombre  juego", "Precio", "Categoria", "Stock"
             }
-        ));
-        jScrollPane1.setViewportView(tabla_usuarios);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tabla_juegos);
+        if (tabla_juegos.getColumnModel().getColumnCount() > 0) {
+            tabla_juegos.getColumnModel().getColumn(0).setMaxWidth(50);
+            tabla_juegos.getColumnModel().getColumn(1).setMaxWidth(200);
+            tabla_juegos.getColumnModel().getColumn(2).setMaxWidth(180);
+            tabla_juegos.getColumnModel().getColumn(3).setMaxWidth(200);
+            tabla_juegos.getColumnModel().getColumn(4).setMaxWidth(140);
+        }
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ir a.png"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,8 +84,8 @@ public class Categoria extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(66, 66, 66)
                 .addComponent(jComboBoxCategoria1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
@@ -97,76 +94,41 @@ public class Categoria extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jComboBoxCategoria1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(78, 78, 78)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(jComboBoxCategoria1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel1)))
+                .addGap(88, 88, 88)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        /*try {
-            lista.setColumnCount(0);            
-            for (Juego j : t.listajuegos) {
-                if (j.getCategoria().equals(this.jComboBoxCategoria1.getSelectedItem())) {
-                    lista.addColumn(j.getId()+"  "+j.getNombre()+"  "+j.getCategoria()+"  "+j.getPrecio());
-                }
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        try {      
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select* from tabla_juego where categoria_jue='"+this.jComboBoxCategoria1.getSelectedItem()+"'");
+            modelo = new DefaultTableModel(null,titulos);
+            while(rs.next()) {
+                fila[0] = rs.getString("id");
+                fila[1] = rs.getString("nombre_jue");
+                fila[2] = rs.getString("precio_jue");
+                fila[3] = rs.getString("categoria_jue");
+                fila[4] = rs.getString("stock_jue");
+                modelo.addRow(fila);     
             }
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "No se encuentran registros...");
-        }*/
-        try {
-            
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-               Class.forName("com.mysql.jdbc.Driver").newInstance();
-               con = DriverManager.getConnection(url,usuario,contraseña);
-               if (con!= null)
-                   System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
-               
-               stmt = con.createStatement();
-               ResultSet rs = stmt.executeQuery("select* from tabla_juego where categoria_jue='"+this.jComboBoxCategoria1.getSelectedItem()+"'");
-               
-               modelo = new DefaultTableModel(null,titulos);
-            
-               while(rs.next()) {
-                   
-                   fila[0] = rs.getString("id");
-                   fila[1] = rs.getString("nombre_jue");
-                   fila[2] = rs.getString("precio_jue");
-                   fila[3] = rs.getString("categoria_jue");
-                   fila[4] = rs.getString("stock_jue");
-                   
-                   
-                   modelo.addRow(fila);     
-               }
-                tabla_usuarios.setModel(modelo);
-                TableColumn ci = tabla_usuarios.getColumn("ID");
-                ci.setMaxWidth(70);
-                TableColumn cn = tabla_usuarios.getColumn("Nombre del juego");
-                cn.setMaxWidth(200);
-                TableColumn cnick = tabla_usuarios.getColumn("Precio");
-                cnick.setMaxWidth(180);
-                TableColumn cd = tabla_usuarios.getColumn("Categoria");
-                cd.setMaxWidth(200);
-                TableColumn ct = tabla_usuarios.getColumn("Stock");
-                ct.setMaxWidth(140);
-                
-               
-        }
-        catch (Exception e) {
-            
+            tabla_juegos.setModel(modelo);
+        }catch (SQLException e) {
             JOptionPane.showMessageDialog(null,"Error al extraer los datos de la tabla");
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        }   
+    }//GEN-LAST:event_jLabel1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -211,9 +173,9 @@ public class Categoria extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBoxCategoria1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tabla_usuarios;
+    private javax.swing.JTable tabla_juegos;
     // End of variables declaration//GEN-END:variables
 }

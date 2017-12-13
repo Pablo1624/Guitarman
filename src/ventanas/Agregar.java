@@ -7,7 +7,6 @@ package ventanas;
 
 import Modelo.Conectar;
 import javax.swing.JOptionPane;
-import Modelo.Tienda;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,7 +17,6 @@ public class Agregar extends javax.swing.JDialog {
     /**
      * Creates new form Agregar
      */
-    Tienda t=new Tienda();
     PreparedStatement stmt=null;
     public Agregar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -147,51 +145,7 @@ public class Agregar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonAgregar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregar1ActionPerformed
-        /*try {
-            Juego j=new Juego();
-            boolean a=true;
-            if ("".equals(this.jTextFieldID.getText())){
-                JOptionPane.showMessageDialog(null, "Ingrese el ID del juego\nVuelva a Intentarlo...");
-                a=false;
-                this.jTextFieldID.setText("");
-            }
-            if("".equals(this.jTextFieldNombre.getText())) {
-                JOptionPane.showMessageDialog(null, "Ingrese el Nombre del juego\nVuelva a Intentarlo...");
-                a=false;
-                this.jTextFieldNombre.setText("");
-            }
-            if("".equals(this.jTextFieldPrecio.getText())) {
-                JOptionPane.showMessageDialog(null, "Ingrese el Precio del juego\nVuelva a Intentarlo...");
-                a=false;
-                this.jTextFieldPrecio.setText("");
-            }
-            if ("".equals(this.jTextFieldStock.getText())){
-                JOptionPane.showMessageDialog(null, "Ingrese el Stock del juego\nVuelva a Intentarlo...");
-                a=false;
-                this.jTextFieldStock.setText("");
-            }
-            if("Seleccione una opcion".equals(this.jComboBoxCategoria.getSelectedItem())) {
-                JOptionPane.showMessageDialog(null, "Ingrese la Categoria del juego\nVuelva a Intentarlo...");
-                a=false;
-            }
-            if (a==true) {
-                j.setId(Integer.parseInt(this.jTextFieldID.getText()));
-                j.setNombre(this.jTextFieldNombre.getText());
-                j.setCategoria((String)this.jComboBoxCategoria.getSelectedItem());
-                j.setPrecio(String.valueOf(this.jTextFieldPrecio.getText()));
-                j.setStock(Integer.parseInt(this.jTextFieldStock.getText()));
-                t.agregar(j);
-                this.jTextFieldID.setText("");
-                this.jTextFieldNombre.setText("");
-                this.jTextFieldPrecio.setText("");
-                this.jTextFieldStock.setText("");
-                this.jComboBoxCategoria.setSelectedIndex(0);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Registro Inválido\nVuelva a Intentarlo...");
-        }*/
-        try {
-            
+        try {            
             Conectar cl=new Conectar();
             Connection reg=cl.getConnection();
             String nombre,categoria,sql;
@@ -228,7 +182,7 @@ public class Agregar extends javax.swing.JDialog {
                 stock=Integer.parseInt(jTextFieldStock.getText());
                 categoria=(String)jComboBoxCategoria.getSelectedItem();
                 sql="INSERT INTO tabla_juego(id,nombre_jue,precio_jue,categoria_jue,stock_jue)VALUES(?,?,?,?,?)";
-                try {
+                try {   
                     PreparedStatement pst=reg.prepareStatement(sql);
                     try {
                         pst.setInt(1, id);
@@ -246,7 +200,7 @@ public class Agregar extends javax.swing.JDialog {
                             this.jComboBoxCategoria.setSelectedIndex(0);
                             this.jTextFieldStock.setText("");
                         }
-                    } catch (Exception e) {
+                    } catch (SQLException e) {
                         JOptionPane.showMessageDialog(null, "ID ya existe\nVuelva a intentarlo...");
                         stmt = reg.prepareStatement("UPDATE tabla_juego SET stock_jue = stock_jue + 1 WHERE id ="+this.jTextFieldID.getText());
                         stmt.executeUpdate();

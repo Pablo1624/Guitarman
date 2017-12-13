@@ -1,29 +1,23 @@
 
 package ventanas;
 
-import Modelo.Juego;
-import Modelo.Tienda;
+import Modelo.Conectar;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 public class Vender extends javax.swing.JDialog {
 
     private DefaultListModel lista=new DefaultListModel();
-    Tienda t=new Tienda();
     int cont_ventas=0;
     Connection con = null;
     PreparedStatement stmt = null;
-    ArrayList<String> historial_ventas;
     public Vender(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
-        historial_ventas=new ArrayList<>();
         jList1.setModel(lista);
     }
 
@@ -129,39 +123,14 @@ public class Vender extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVenderActionPerformed
-        /*try{
-            for (Juego j : t.getListajuegos()) {
-                if (j.getId()==Integer.parseInt(this.jTextFieldvender_id.getText())) {
-                    if (j.getStock()>0) {
-                        j.setStock(t.resta(j.getStock()));
-                        cont_ventas+=Integer.parseInt(j.getPrecio());
-                        historial_ventas.add(j.getNombre());
-                        JOptionPane.showMessageDialog(null, "Uds. ha comprado un "+j.getNombre()+" ha\t$ "+j.getPrecio());
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(null, "No hay Stock de "+j.getNombre());
-                    }
-                }
-            }
-            this.jTextFieldvender_id.setText("");
-        }
-        catch (Exception e){
-            JOptionPane.showMessageDialog(null, "");
-        }*/
         try {
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(url,usuario,contraseña);
-            if (con!= null)
-                System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
             stmt = con.prepareStatement("UPDATE tabla_juego SET stock_jue = stock_jue - 1 WHERE id ="+this.jTextFieldvender_id.getText());
             stmt.executeUpdate();
             ResultSet rs = stmt.executeQuery("select* from tabla_juego where id="+this.jTextFieldvender_id.getText());    
             while(rs.next()) {
-                JOptionPane.showMessageDialog(null, "Uds. ha comprado "+rs.getString("nombre_jue")+" ha\t$ "+rs.getString("precio_jue"));             
+                JOptionPane.showMessageDialog(null, "Se ha vendido: "+rs.getString("nombre_jue")+" a $"+rs.getString("precio_jue"));             
                 PreparedStatement pstm=con.prepareStatement("INSERT INTO tabla_ventas(id,nombre_jue,precio_jue)VALUES(?,?,?)");
                 pstm.setInt(1, rs.getInt("id"));
                 pstm.setString(2, rs.getString("nombre_jue"));
@@ -175,27 +144,11 @@ public class Vender extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonVenderActionPerformed
 
     private void jButtonHistorial_ventasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHistorial_ventasActionPerformed
-        /*if (this.historial_ventas.size()>0) {
-            this.lista.setSize(0);
-            for (int i = 0; i < historial_ventas.size(); i++) {
-                this.lista.addElement("-"+historial_ventas.get(i));
-            }
-
-        }
-        else{
-            JOptionPane.showMessageDialog(null, "No hay registro de ventas,\nVuelve a Intentarlo...");
-        }*/
         try {
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(url,usuario,contraseña);
-            if (con!= null)
-                System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
-            ResultSet rs = stmt.executeQuery("select* from tabla_ventas");    
-            
+            lista.setSize(0);
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
+            ResultSet rs = stmt.executeQuery("select* from tabla_ventas");
             while(rs.next()){
                 this.lista.addElement("* "+rs.getString("nombre_jue")+"   $"+rs.getInt("precio_jue"));
                 cont_ventas+=rs.getInt("precio_jue");

@@ -6,8 +6,10 @@
 package ventanas;
 
 
-import Modelo.Tienda;
-import Modelo.Juego;
+import Modelo.Conectar;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Connection;
 import javax.swing.JOptionPane;
 
 public class Buscar extends javax.swing.JDialog {
@@ -15,7 +17,8 @@ public class Buscar extends javax.swing.JDialog {
     /**
      * Creates new form Buscar
      */
-    Tienda t =new Tienda();
+    Connection con;
+    Statement stmt;
     public Buscar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -103,16 +106,17 @@ public class Buscar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        try {
-            for (Juego jueg : t.listajuegos) {
-                if (jueg.getId()==Integer.parseInt(this.jTextFieldBuscarID.getText())) {
-                    this.jLabelNombre.setText(jueg.getNombre());
-                    this.jLabelStock.setText(String.valueOf(jueg.getStock()));
-                }
+        try {           
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select* from tabla_juego where id="+this.jTextFieldBuscarID.getText());    
+            while(rs.next()) {
+                jLabelNombre.setText(rs.getString("nombre_jue"));
+                jLabelStock.setText(rs.getString("stock_jue"));                
             }
-            this.jTextFieldBuscarID.setText("");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ingrese algun ID para buscar\nVuelva a Intentarlo...");
+            JOptionPane.showMessageDialog(null,"Error al extraer los datos.");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 

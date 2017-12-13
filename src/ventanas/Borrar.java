@@ -5,14 +5,14 @@
  */
 package ventanas;
 
+import Modelo.Conectar;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 /**
  *
@@ -25,8 +25,8 @@ public class Borrar extends javax.swing.JDialog {
      */
     Connection con = null;
     Statement stmt = null;
-    PreparedStatement pstmt = null;
-    String titulos[] = {"ID","Nombre del juego","Precio","Categoria","Stock"};
+    PreparedStatement pstmt=null;
+    String titulos[] = {"ID","Nombre juego","Precio","Categoria","Stock"};
     String fila[] = new String [5];
     DefaultTableModel modelo;
     public Borrar(java.awt.Frame parent, boolean modal) {
@@ -35,51 +35,25 @@ public class Borrar extends javax.swing.JDialog {
         this.setTitle("***TODOS LOS REGISTROS***");
         this.setResizable(false);//no puede editar la ventana
         this.setLocationRelativeTo(null);
-        try {         
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-               Class.forName("com.mysql.jdbc.Driver").newInstance();
-               con = DriverManager.getConnection(url,usuario,contraseña);
-               if (con!= null)
-                   System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
-               
-               stmt = con.createStatement();
-               ResultSet rs = stmt.executeQuery("select* from tabla_juego");
-               
-               modelo = new DefaultTableModel(null,titulos);
-            
-               while(rs.next()) {
-                   
-                   fila[0] = rs.getString("id");
-                   fila[1] = rs.getString("nombre_jue");
-                   fila[2] = rs.getString("precio_jue");
-                   fila[3] = rs.getString("categoria_jue");
-                   fila[4] = rs.getString("stock_jue");
-                   
-                   
-                   modelo.addRow(fila);     
-               }
-                tabla_usuarios.setModel(modelo);
-                TableColumn ci = tabla_usuarios.getColumn("ID");
-                ci.setMaxWidth(70);
-                TableColumn cn = tabla_usuarios.getColumn("Nombre del juego");
-                cn.setMaxWidth(200);
-                TableColumn cp = tabla_usuarios.getColumn("Precio");
-                cp.setMaxWidth(180);
-                TableColumn cc = tabla_usuarios.getColumn("Categoria");
-                cc.setMaxWidth(200);
-                TableColumn cs = tabla_usuarios.getColumn("Stock");
-                cs.setMaxWidth(140);
-                
-               
-        }
-        catch (Exception e) {
-            
+
+        try {      
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select* from tabla_juego");
+            modelo = new DefaultTableModel(null,titulos);
+            while(rs.next()) {
+                fila[0] = rs.getString("id");
+                fila[1] = rs.getString("nombre_jue");
+                fila[2] = rs.getString("precio_jue");
+                fila[3] = rs.getString("categoria_jue");
+                fila[4] = rs.getString("stock_jue");
+                modelo.addRow(fila);     
+            }
+            tabla_juegos.setModel(modelo);
+        }catch (SQLException e) {
             JOptionPane.showMessageDialog(null,"Error al extraer los datos de la tabla");
         }
-
     }
     
 
@@ -93,13 +67,13 @@ public class Borrar extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabla_usuarios = new javax.swing.JTable();
+        tabla_juegos = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        tabla_usuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tabla_juegos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -110,7 +84,7 @@ public class Borrar extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tabla_usuarios);
+        jScrollPane1.setViewportView(tabla_juegos);
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,8 +108,8 @@ public class Borrar extends javax.swing.JDialog {
                 .addGap(288, 288, 288)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(276, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -168,19 +142,16 @@ public class Borrar extends javax.swing.JDialog {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-       try {
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(url,usuario,contraseña);
-            if (con!= null)
-                System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
+        try {
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
             pstmt = con.prepareStatement("DELETE FROM tabla_juego WHERE id ="+this.jTextField1.getText());
             pstmt.executeUpdate();
-            
-        } catch (Exception e) {
+            this.jTextField1.setText("");
+            this.setVisible(false);
+            JOptionPane.showMessageDialog(null, "Juego borrado de la base de datos.");
+            this.setVisible(true);
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "No se pudo completar la accion...");
         }
     }//GEN-LAST:event_jLabel1MouseClicked
@@ -231,6 +202,6 @@ public class Borrar extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTable tabla_usuarios;
+    private javax.swing.JTable tabla_juegos;
     // End of variables declaration//GEN-END:variables
 }

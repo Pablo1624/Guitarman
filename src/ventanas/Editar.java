@@ -5,24 +5,20 @@
  */
 package ventanas;
 
-
-import Modelo.Juego;
-import Modelo.Tienda;
+import Modelo.Conectar;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 public class Editar extends javax.swing.JDialog {
 
     /**
      * Creates new form Cambiar_Precio
      */
-     Connection con = null;
+    Connection con = null;
     Statement stmt = null;
-    Tienda t=new Tienda();
     public Editar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -147,37 +143,9 @@ public class Editar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarActionPerformed
-        /*try{
-            this.jTextFieldPrecioAC.setEnabled(false);
-            this.jTextFieldNombre1.setEnabled(false);
-            if (t.listajuegos.size()>0){
-                Juego encontrado= null;
-                for (Juego juego : t.listajuegos){
-                    if (juego.getId()==Integer.parseInt(this.jTextFieldID1.getText())){
-                        encontrado= juego;
-                    }
-                }
-                this.jTextFieldPrecioAC.setText(String.valueOf(encontrado.getPrecio()));
-                this.jTextFieldNombre1.setText(encontrado.getNombre());
-                this.jButtonEditar.setEnabled(true);
-            }
-            else{
-                JOptionPane.showMessageDialog(null, "No se encuentra registro del ID");
-            }
-        }
-        catch (Exception e){
-
-        }*/
         try {            
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(url,usuario,contraseña);
-            if (con!= null)
-                System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url); 
-
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("select* from tabla_juego where id="+this.jTextFieldID1.getText());    
             while(rs.next()) {
@@ -194,31 +162,9 @@ public class Editar extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonConsultarActionPerformed
 
     private void jButtonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarActionPerformed
-        /*try {
-            for (Juego juego : t.listajuegos){
-                if (juego.getId()==Integer.parseInt(this.jTextFieldID1.getText())){
-                    juego.setPrecio(String.valueOf(this.jTextFieldNuevo_precio.getText()));
-
-                }
-            }
-            this.jTextFieldID1.setText("");
-            this.jTextFieldNombre1.setText("");
-            this.jTextFieldPrecioAC.setText("");
-            this.jTextFieldNuevo_precio.setText("");
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "No se encuentra registro del ID");
-        }*/
         try {
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(url,usuario,contraseña);
-            if (con!= null){
-                System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url); 
-            }
-
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
             PreparedStatement stm=con.prepareStatement("UPDATE `tabla_juego` SET `nombre_jue`='"+this.jTextFieldNombre1.getText()+"',`precio_jue`="+this.jTextFieldPrecioAC.getText()+",`categoria_jue`='"+this.jComboBoxCategoria.getSelectedItem()+"',`stock_jue`="+this.jTextFieldStock.getText()+" WHERE `id`="+this.jTextFieldID1.getText());    
             stm.executeUpdate();
             this.jButtonEditar.setEnabled(false);
