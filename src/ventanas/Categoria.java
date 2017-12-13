@@ -25,6 +25,7 @@ public class Categoria extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         this.setResizable(false);//no puede editar la ventana
         this.setLocationRelativeTo(null);
+        this.tabla_juegos.setEnabled(false);
     }
 
     /**

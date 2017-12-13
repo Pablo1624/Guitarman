@@ -6,13 +6,12 @@
 package ventanas;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import Modelo.Conectar;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 /**
  *
@@ -20,10 +19,10 @@ import javax.swing.table.TableColumn;
  */
 public class Ventana_registros extends javax.swing.JDialog {
     Connection con = null;
-   Statement stmt = null;
-   String titulos[] = {"ID","Nombre del juego","Precio","Categoria","Stock"};
-   String fila[] = new String [5];
-   DefaultTableModel modelo;
+    Statement stmt = null;
+    String titulos[] = {"ID","Nombre del juego","Precio","Categoria","Stock"};
+    String fila[] = new String [5];
+    DefaultTableModel modelo;
     /**
      * Creates new form Ventana_registros
      */
@@ -31,59 +30,29 @@ public class Ventana_registros extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setTitle("***TODOS LOS REGISTROS***");
-        this.setLocation(335,200);//aparece en medio
         this.setResizable(false);//no puede editar la ventana
-        ImageIcon icono = new ImageIcon("C:\\Users\\kdt_r_000\\Documents\\NetBeansProjects\\ProyectoInterfaz\\src\\Imagenes\\add-user.png");
-        this.setIconImage(icono.getImage());
         this.setLocationRelativeTo(null);
+        this.tabla_juegos.setEnabled(false);
 
-        try {
-            
-            String url = "jdbc:mysql://localhost/tienda_juegos";
-            String usuario = "root";
-            String contraseña = "";  
-            
-               Class.forName("com.mysql.jdbc.Driver").newInstance();
-               con = DriverManager.getConnection(url,usuario,contraseña);
-               if (con!= null)
-                   System.out.println("Se ha establecido una conexion a la base de datos"+"\n"+url);
-               
-               stmt = con.createStatement();
-               ResultSet rs = stmt.executeQuery("select* from tabla_juego");
-               
-               modelo = new DefaultTableModel(null,titulos);
-            
-               while(rs.next()) {
-                   
-                   fila[0] = rs.getString("id");
-                   fila[1] = rs.getString("nombre_jue");
-                   fila[2] = rs.getString("precio_jue");
-                   fila[3] = rs.getString("categoria_jue");
-                   fila[4] = rs.getString("stock_jue");
-                   
-                   
-                   modelo.addRow(fila);     
-               }
-                tabla_usuarios.setModel(modelo);
-                TableColumn ci = tabla_usuarios.getColumn("ID");
-                ci.setMaxWidth(70);
-                TableColumn cn = tabla_usuarios.getColumn("Nombre del juego");
-                cn.setMaxWidth(200);
-                TableColumn cp = tabla_usuarios.getColumn("Precio");
-                cp.setMaxWidth(180);
-                TableColumn cc = tabla_usuarios.getColumn("Categoria");
-                cc.setMaxWidth(200);
-                TableColumn cs = tabla_usuarios.getColumn("Stock");
-                cs.setMaxWidth(140);
-                
-               
-        }
-        catch (Exception e) {
-            
+        try {      
+            Conectar cl=new Conectar();
+            con=cl.getConnection();
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select* from tabla_juego");
+            modelo = new DefaultTableModel(null,titulos);
+            while(rs.next()) {
+                fila[0] = rs.getString("id");
+                fila[1] = rs.getString("nombre_jue");
+                fila[2] = rs.getString("precio_jue");
+                fila[3] = rs.getString("categoria_jue");
+                fila[4] = rs.getString("stock_jue");
+                modelo.addRow(fila);     
+            }
+            tabla_juegos.setModel(modelo);
+        }catch (SQLException e) {
             JOptionPane.showMessageDialog(null,"Error al extraer los datos de la tabla");
         }
-
-    }
+     }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -96,13 +65,13 @@ public class Ventana_registros extends javax.swing.JDialog {
 
         fondo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabla_usuarios = new javax.swing.JTable();
+        tabla_juegos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 600, 360));
 
-        tabla_usuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tabla_juegos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -112,10 +81,18 @@ public class Ventana_registros extends javax.swing.JDialog {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ));
-        jScrollPane1.setViewportView(tabla_usuarios);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 800, 600));
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tabla_juegos);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 1, 600, 490));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -165,6 +142,6 @@ public class Ventana_registros extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel fondo;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tabla_usuarios;
+    private javax.swing.JTable tabla_juegos;
     // End of variables declaration//GEN-END:variables
 }

@@ -35,6 +35,7 @@ public class Borrar extends javax.swing.JDialog {
         this.setTitle("***TODOS LOS REGISTROS***");
         this.setResizable(false);//no puede editar la ventana
         this.setLocationRelativeTo(null);
+        this.tabla_juegos.setEnabled(false);
 
         try {      
             Conectar cl=new Conectar();
